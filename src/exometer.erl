@@ -97,6 +97,7 @@ start() ->
 
 %% @doc Stop exometer and dependent apps (for testing).
 stop() ->
+    application:stop(setup),
     application:stop(exometer_core),
     application:stop(lager).
 
