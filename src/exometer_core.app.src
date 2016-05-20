@@ -2,7 +2,7 @@
 {application, exometer_core,
  [
   {description, "Code instrumentation and metrics collection package."},
-  {vsn, "1.0.0"},
+  {vsn, "1.4.0"},
   {applications,
    [
     kernel,
@@ -16,7 +16,7 @@
   {env,
    [
    ]},
-  {maintainers,["basho", "Heinz N. Gies"]},
+  {maintainers,["Feuerlabs", "Heinz N. Gies"]},
   {licenses,["MPL"]},
-  {links,[{"Github","https://github.com/basho/exometer_core"}]}
+  {links,[{"Github","https://github.com/Feuerlabs/exometer_core"}]}
  ]}.
