@@ -137,14 +137,9 @@ init_per_testcase(Case, Config) when
 init_per_testcase(Case, Config) when
       Case == test_ext_predef;
       Case == test_function_match ->
-<<<<<<< HEAD
-    Scr = data_file(Config, "test_defaults.script"),
-    ok = application:set_env(stdlib, exometer_predefined, {script, Scr}),
-=======
     ok = application:set_env(
            stdlib, exometer_predefined,
            {script, file_path("test/data/test_defaults.script")}),
->>>>>>> 1.5.0
     {ok, StartedApps} = exometer_test_util:ensure_all_started(exometer_core),
     ct:log("StartedApps = ~p~n", [StartedApps]),
     [{started_apps, StartedApps} | Config];
@@ -383,25 +378,6 @@ test_aggregate(_Config) ->
 	exometer:aggregate([{ {[?MODULE,K,'_','_'],'_','_'},[],[true] }], default),
     ok.
 
-<<<<<<< HEAD
-test_history1_slide(Config) ->
-    test_history(1, slide, data_file(Config, "puts_time_hist1.bin")).
-
-test_history1_slotslide(Config) ->
-    test_history(1, slot_slide, data_file(Config, "puts_time_hist1.bin")).
-
-test_history1_folsom(Config) ->
-    test_history(1, folsom, data_file(Config, "puts_time_hist1.bin")).
-
-test_history4_slide(Config) ->
-    test_history(4, slide, data_file(Config, "puts_time_hist4.bin")).
-
-test_history4_slotslide(Config) ->
-    test_history(4, slot_slide, data_file(Config, "puts_time_hist4.bin")).
-
-test_history4_folsom(Config) ->
-    test_history(4, folsom, data_file(Config, "puts_time_hist4.bin")).
-=======
 test_history1_slide(_Config) ->
     test_history(1, slide, file_path("test/data/puts_time_hist1.bin")).
 
@@ -422,8 +398,6 @@ test_history4_folsom(_Config) ->
 
 file_path(F) ->
     filename:join(code:lib_dir(exometer_core), F).
-
->>>>>>> 1.5.0
 
 test_ext_predef(_Config) ->
     {ok, [{total, _}]} = exometer:get_value([preset, func], [total]),
