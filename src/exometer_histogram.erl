@@ -40,7 +40,7 @@
 %% Supported options:
 %%
 %% * `time_span' (default: `60000') size of the window in milliseconds.
-%% * `slot_period' (default: `1000') size of the time slots in milliseconds.
+%% * `slot_period' (default: `10') size of the time slots in milliseconds.
 %% * `histogram_module' (default: `exometer_slot_slide').
 %% * `truncate' (default: `true') whether to truncate the datapoint values.
 %%     Supported values: `true | false | round', where `round' means to round
@@ -91,7 +91,7 @@
 
 -record(st, {name,
              slide = undefined, %%
-             slot_period = 1000, %% msec
+             slot_period = 10, %% msec
              time_span = 60000, %% msec
              truncate = true,
              histogram_module = exometer_slot_slide,
@@ -112,10 +112,7 @@ probe_init(Name, _Type, Options) ->
     {ok, init_state(Name, Options)}.
 
 init_state(Name, Options) ->
-    St = process_opts(#st{name = Name},
-                      [{histogram_module, exometer_slot_slide},
-                       {time_span, 60000},
-                       {slot_period, 10}] ++ Options),
+    St = process_opts(#st{name = Name}, Options),
     Slide = (St#st.histogram_module):new(St#st.time_span,
                                          St#st.slot_period,
                                          fun average_sample/3,
@@ -199,7 +196,13 @@ get_value_int_(#st{truncate = Trunc,
                 {Length, lists:sort(Lst0)}
         end,
     TopPercentiles = get_from_heap(Heap, TS, TimeSpan, FullLength, DataPoints),
-    Results = exometer_util:get_statistics2(Len, List, Total, Mean),
+    Results = case List of
+                  [0, 0] ->
+                      %% a case where Min and Max are the only data, nil
+                      [];
+                  _ ->
+                      exometer_util:get_statistics2(Len, List, Total, Mean)
+              end,
     CombinedResults = TopPercentiles ++ Results,
     [get_dp(K, CombinedResults, Trunc) || K <- DataPoints].
 
@@ -508,6 +511,6 @@ dupl(N,V) ->
     lists:duplicate(N, V).
 
 shuffle(List) ->
-    random:seed(random:seed0()),
-    Randomized = lists:keysort(1, [{random:uniform(), Item} || Item <- List]),
+    exometer_util:seed(exometer_util:seed0()),
+    Randomized = lists:keysort(1, [{exometer_util:uniform(), Item} || Item <- List]),
     [Value || {_, Value} <- Randomized].

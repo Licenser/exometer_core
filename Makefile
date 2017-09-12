@@ -3,12 +3,12 @@
 EXOMETER_PLT=exometer_core.plt
 DIALYZER_OPTS = # -Wunderspecs
 DIALYZER_APPS = erts kernel stdlib compiler syntax_tools \
-		test_server common_test lager goldrush folsom \
+		test_server common_test folsom \
 		parse_trans setup
 
 all: compile xref test
 
-ci: compile xref dialyzer test
+ci: deps compile xref dialyzer test
 
 compile:
 	rebar3 compile
@@ -28,7 +28,8 @@ doc:
 $(EXOMETER_PLT):
 	rebar3 get-deps compile
 	ERL_LIBS=deps dialyzer --build_plt --output_plt $(EXOMETER_PLT) \
-	--apps $(DIALYZER_APPS)
+	--apps $(DIALYZER_APPS) | \
+	fgrep -v -f ./dialyzer.ignore-warnings
 
 clean_plt:
 	rm -f $(EXOMETER_PLT)
